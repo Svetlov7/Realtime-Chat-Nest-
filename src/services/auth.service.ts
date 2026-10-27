@@ -4,39 +4,30 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
-import { QueryFailedError, Repository } from 'typeorm';
-import { hashPassword, verifyPassword } from '../../common/security/password.js';
-import { User } from '../users/entities/user.entity.js';
-import { LoginDto } from './dto/login.dto.js';
-import { RegisterDto } from './dto/register.dto.js';
+import { hashPassword, verifyPassword } from '../common/security/password.js';
+import { LoginDto, RegisterDto } from '../dto/auth/index.js';
+import { User } from '../entities/user.entity.js';
+import { UsersRepository } from '../repositories/users.repository.js';
 
 type PublicUser = Omit<User, 'passwordHash'>;
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly usersRepository: UsersRepository,
     private readonly jwtService: JwtService,
   ) {}
 
   async register(registerDto: RegisterDto) {
     const { password, ...profile } = registerDto;
     try {
-      const user = await this.userRepository.save(
-        this.userRepository.create({
-          ...profile,
-          passwordHash: await hashPassword(password),
-        }),
-      );
+      const user = await this.usersRepository.create({
+        ...profile,
+        passwordHash: await hashPassword(password),
+      });
       return this.createSession(user);
     } catch (error) {
-      if (
-        error instanceof QueryFailedError &&
-        (error as QueryFailedError & { driverError?: { code?: string } })
-          .driverError?.code === '23505'
-      ) {
+      if (this.usersRepository.isUniqueViolation(error)) {
         throw new ConflictException('Email or username is already in use');
       }
       throw error;
@@ -44,11 +35,9 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto) {
-    const user = await this.userRepository
-      .createQueryBuilder('user')
-      .addSelect('user.passwordHash')
-      .where('user.email = :email', { email: loginDto.email })
-      .getOne();
+    const user = await this.usersRepository.findByEmailWithPassword(
+      loginDto.email,
+    );
 
     if (!user || !(await verifyPassword(loginDto.password, user.passwordHash))) {
       throw new UnauthorizedException('Invalid email or password');

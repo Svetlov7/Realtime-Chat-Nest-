@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
-import { User } from '../../users/entities/user.entity.js';
+import { User } from './user.entity.js';
 import { Conversation } from './conversation.entity.js';
 
 @Entity('conversation_members')

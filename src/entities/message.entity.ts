@@ -7,7 +7,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { User } from '../../users/entities/user.entity.js';
+import { User } from './user.entity.js';
 import { Conversation } from './conversation.entity.js';
 
 @Entity('messages')

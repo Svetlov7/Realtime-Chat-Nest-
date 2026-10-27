@@ -7,7 +7,7 @@ import {
   IsUUID,
   MaxLength,
 } from 'class-validator';
-import type { ConversationType } from '../entities/conversation.entity.js';
+import type { ConversationType } from '../../entities/conversation.entity.js';
 
 export class CreateConversationDto {
   @IsIn(['pair', 'group'])

@@ -9,10 +9,10 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import type { AuthenticatedRequest } from '../auth/authenticated-request.js';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
-import { UpdateUserDto } from './dto/index.js';
-import { UsersService } from './users.service.js';
+import { JwtAuthGuard } from '../common/guards/jwt-auth.guard.js';
+import type { AuthenticatedRequest } from '../common/types/authenticated-request.js';
+import { UpdateUserDto } from '../dto/users/index.js';
+import { UsersService } from '../services/users.service.js';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard)

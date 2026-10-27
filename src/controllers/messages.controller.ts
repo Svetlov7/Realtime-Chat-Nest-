@@ -9,11 +9,13 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import type { AuthenticatedRequest } from '../auth/authenticated-request.js';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
-import { CreateMessageDto } from './dto/create-message.dto.js';
-import { ListMessagesQueryDto } from './dto/list-messages-query.dto.js';
-import { MessagesService } from './messages.service.js';
+import { JwtAuthGuard } from '../common/guards/jwt-auth.guard.js';
+import type { AuthenticatedRequest } from '../common/types/authenticated-request.js';
+import {
+  CreateMessageDto,
+  ListMessagesQueryDto,
+} from '../dto/messages/index.js';
+import { MessagesService } from '../services/messages.service.js';
 
 @Controller('conversations/:conversationId/messages')
 @UseGuards(JwtAuthGuard)
