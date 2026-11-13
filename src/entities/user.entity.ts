@@ -23,7 +23,7 @@ export class User {
   @Column({ name: 'last_name', length: 100 })
   lastName: string;
 
-  @Column({ nullable: true, length: 30 })
+  @Column({ type: 'varchar', nullable: true, length: 30 })
   phone: string | null;
 
   @Column({ name: 'password_hash', select: false, length: 255 })

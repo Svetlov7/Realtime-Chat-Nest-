@@ -31,3 +31,11 @@ Thumbs.db
 /.nyc_output
 
 /.turbonode_modules
+
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example

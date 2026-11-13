@@ -1,0 +1,8 @@
+# Local MinIO from docker-compose.yml
+s3_endpoint                = "http://localhost:9000"
+access_key                 = "minioadmin"
+secret_key                 = "minioadmin"
+bucket_name                = "realtime-chat-attachments"
+force_destroy              = true
+manage_public_access_block = false
+cors_allowed_origins       = []

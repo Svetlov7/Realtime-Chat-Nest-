@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
+import type { Relation } from 'typeorm';
 import { User } from './user.entity.js';
 import { Conversation } from './conversation.entity.js';
 
@@ -25,7 +26,7 @@ export class ConversationMember {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'conversation_id' })
-  conversation: Conversation;
+  conversation: Relation<Conversation>;
 
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
