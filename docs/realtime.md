@@ -19,7 +19,7 @@ socket.on('connect_error', (err) => {
 });
 ```
 
-The `Authorization: Bearer <token>` header also works for non-browser clients. The token is only checked at connect time. A socket stays connected after its token expires, and the next reconnect needs a fresh token.
+The `Authorization: Bearer <token>` header also works for non-browser clients. The token is only checked at connect time. A socket stays connected after its token expires, and the next reconnect needs a fresh token. Get one from `POST /auth/refresh` ([auth.md](auth.md)).
 
 ## Events (server → client)
 

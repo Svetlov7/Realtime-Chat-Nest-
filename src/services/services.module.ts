@@ -22,7 +22,11 @@ import { UsersService } from './users.service.js';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         secret: configService.getOrThrow<string>('JWT_SECRET'),
-        signOptions: { expiresIn: 3600 },
+        signOptions: {
+          expiresIn: Number(
+            configService.get<string>('JWT_ACCESS_EXPIRES_IN') ?? 900,
+          ),
+        },
       }),
     }),
   ],

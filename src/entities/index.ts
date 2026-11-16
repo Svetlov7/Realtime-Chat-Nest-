@@ -2,4 +2,5 @@ export * from './conversation-member.entity.js';
 export * from './conversation.entity.js';
 export * from './message-attachment.entity.js';
 export * from './message.entity.js';
+export * from './refresh-token.entity.js';
 export * from './user.entity.js';
