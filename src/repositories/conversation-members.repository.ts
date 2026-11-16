@@ -21,4 +21,20 @@ export class ConversationMembersRepository {
   isMember(conversationId: string, userId: string): Promise<boolean> {
     return this.repository.exist({ where: { conversationId, userId } });
   }
+
+  findUserIds(conversationId: string): Promise<string[]> {
+    return this.repository
+      .find({ where: { conversationId }, select: { userId: true } })
+      .then((members) => members.map((member) => member.userId));
+  }
+
+  // orIgnore: a concurrent add of the same user must not fail on the unique constraint.
+  async addMembers(conversationId: string, userIds: string[]): Promise<void> {
+    await this.repository
+      .createQueryBuilder()
+      .insert()
+      .values(userIds.map((userId) => ({ conversationId, userId })))
+      .orIgnore()
+      .execute();
+  }
 }

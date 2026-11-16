@@ -13,7 +13,10 @@ import {
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard.js';
 import type { AuthenticatedRequest } from '../common/types/authenticated-request.js';
-import { CreateConversationDto } from '../dto/conversations/index.js';
+import {
+  AddMembersDto,
+  CreateConversationDto,
+} from '../dto/conversations/index.js';
 import { ConversationsService } from '../services/conversations.service.js';
 
 @Controller('conversations')
@@ -48,6 +51,15 @@ export class ConversationsController {
     @Req() request: AuthenticatedRequest,
   ) {
     return this.conversationsService.findMembers(id, request.user.userId);
+  }
+
+  @Post(':id/members')
+  addMembers(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Req() request: AuthenticatedRequest,
+    @Body() dto: AddMembersDto,
+  ) {
+    return this.conversationsService.addMembers(id, request.user.userId, dto);
   }
 
   @Delete(':id')

@@ -1,4 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
+import type { EventEmitter2 } from '@nestjs/event-emitter';
+import { DomainEvent } from '../common/events/domain-events.js';
 import type { Message } from '../entities/message.entity.js';
 import type { MessagesRepository } from '../repositories/messages.repository.js';
 import type { AttachmentsService } from './attachments.service.js';
@@ -20,6 +22,7 @@ describe('MessagesService', () => {
     create: ReturnType<typeof vi.fn>;
     createWithAttachments: ReturnType<typeof vi.fn>;
   };
+  let eventEmitter: { emit: ReturnType<typeof vi.fn> };
 
   const message = {
     id: 'm1',
@@ -44,10 +47,12 @@ describe('MessagesService', () => {
       create: vi.fn().mockResolvedValue(message),
       createWithAttachments: vi.fn().mockResolvedValue(message),
     };
+    eventEmitter = { emit: vi.fn() };
     service = new MessagesService(
       conversationsService as unknown as ConversationsService,
       attachmentsService as unknown as AttachmentsService,
       repository as unknown as MessagesRepository,
+      eventEmitter as unknown as EventEmitter2,
     );
   });
 
@@ -56,6 +61,17 @@ describe('MessagesService', () => {
       service.create(CONVERSATION_ID, USER_ID, { content: '   ' }),
     ).rejects.toBeInstanceOf(BadRequestException);
     expect(repository.create).not.toHaveBeenCalled();
+    expect(eventEmitter.emit).not.toHaveBeenCalled();
+  });
+
+  it('publishes the created message with the same payload as the response', async () => {
+    const result = await service.create(CONVERSATION_ID, USER_ID, {
+      content: 'hi',
+    });
+
+    expect(eventEmitter.emit).toHaveBeenCalledWith(DomainEvent.MessageCreated, {
+      message: result,
+    });
   });
 
   it('creates a text-only message without touching attachments', async () => {
@@ -103,5 +119,6 @@ describe('MessagesService', () => {
       service.create(CONVERSATION_ID, USER_ID, { attachmentIds: ['a1'] }),
     ).rejects.toBeInstanceOf(BadRequestException);
     expect(repository.createWithAttachments).not.toHaveBeenCalled();
+    expect(eventEmitter.emit).not.toHaveBeenCalled();
   });
 });

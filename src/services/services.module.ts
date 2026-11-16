@@ -10,6 +10,7 @@ import { AttachmentsService } from './attachments.service.js';
 import { AuthService } from './auth.service.js';
 import { ConversationsService } from './conversations.service.js';
 import { MessagesService } from './messages.service.js';
+import { RealtimeService } from './realtime.service.js';
 import { StorageService } from './storage.service.js';
 import { UsersService } from './users.service.js';
 
@@ -33,6 +34,7 @@ import { UsersService } from './users.service.js';
     StorageService,
     AttachmentsService,
     AttachmentsCleanupService,
+    RealtimeService,
     JwtStrategy,
     JwtAuthGuard,
   ],
@@ -42,6 +44,7 @@ import { UsersService } from './users.service.js';
     ConversationsService,
     MessagesService,
     AttachmentsService,
+    RealtimeService,
     JwtAuthGuard,
   ],
 })

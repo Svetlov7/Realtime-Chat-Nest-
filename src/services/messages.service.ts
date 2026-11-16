@@ -1,4 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import {
+  DomainEvent,
+  type MessageCreatedEvent,
+} from '../common/events/domain-events.js';
 import { CreateMessageDto } from '../dto/messages/index.js';
 import type { MessageAttachment } from '../entities/message-attachment.entity.js';
 import type { Message } from '../entities/message.entity.js';
@@ -22,6 +27,7 @@ export class MessagesService {
     private readonly conversationsService: ConversationsService,
     private readonly attachmentsService: AttachmentsService,
     private readonly messagesRepository: MessagesRepository,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async create(
@@ -53,6 +59,9 @@ export class MessagesService {
       );
     }
     const [response] = await this.toResponses([message]);
+    this.eventEmitter.emit(DomainEvent.MessageCreated, {
+      message: response,
+    } satisfies MessageCreatedEvent);
     return response;
   }
 

@@ -39,11 +39,20 @@ export class AuthService {
       loginDto.email,
     );
 
-    if (!user || !(await verifyPassword(loginDto.password, user.passwordHash))) {
+    if (
+      !user ||
+      !(await verifyPassword(loginDto.password, user.passwordHash))
+    ) {
       throw new UnauthorizedException('Invalid email or password');
     }
 
     return this.createSession(user);
+  }
+
+  /** Verifies an access token issued by this service; throws if it is invalid or expired. */
+  async verifyAccessToken(token: string): Promise<{ userId: string }> {
+    const payload = await this.jwtService.verifyAsync<{ sub: string }>(token);
+    return { userId: payload.sub };
   }
 
   private async createSession(user: User) {
